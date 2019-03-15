@@ -1,14 +1,12 @@
-FROM node:8-slim
+FROM node:10
 
-WORKDIR /starter
-ENV NODE_ENV development
+WORKDIR /usr/src/mean-starter
 
-COPY package.json /starter/package.json
+COPY package.json /usr/src/mean-starter/package.json
 
 RUN npm install
 
-COPY .env.example /starter/.env.example
-COPY . /starter
+COPY . . 
 
 EXPOSE 8080
 

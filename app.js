@@ -6,7 +6,7 @@ const logger = require('morgan');
 const chalk = require('chalk');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 // Parser Middleware
 app.use(bodyParser.json());
