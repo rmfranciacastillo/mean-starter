@@ -1,0 +1,25 @@
+{
+  "name": "mean-starter",
+  "version": "0.0.1",
+  "description": "MEAN starter project based on hackathon hacker starter file",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmfranciacastillo/mean-starter.git"
+  },
+  "keywords": [
+    "mongodb",
+    "angular",
+    "node",
+    "express"
+  ],
+  "author": "Renato Francia",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rmfranciacastillo/mean-starter/issues"
+  },
+  "homepage": "https://github.com/rmfranciacastillo/mean-starter#readme"
+}
