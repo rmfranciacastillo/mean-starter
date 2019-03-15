@@ -4,6 +4,7 @@
   "description": "MEAN starter project based on hackathon hacker starter file",
   "main": "app.js",
   "scripts": {
+  	"start": "node app.js",
     "test": "npm test",
     "lint": "eslint ."
   },
