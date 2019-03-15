@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -5,7 +6,7 @@ const logger = require('morgan');
 const chalk = require('chalk');
 
 const app = express();
-const PORT = 5000 || process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 // Parser Middleware
 app.use(bodyParser.json());
