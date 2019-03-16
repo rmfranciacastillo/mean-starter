@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const chalk = require('chalk');
 const dotenv = require('dotenv');
+const expressStatusMonitor = require('express-status-monitor');
 
 /**
  *  Load environmental variables from .env file
@@ -39,6 +40,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Logger Middleware
 app.use(logger('dev'));
+
+// Monitor status Middleware
+app.use(expressStatusMonitor());
 
 // Static files
 app.use('/', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
