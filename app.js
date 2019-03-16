@@ -8,6 +8,7 @@ const logger = require('morgan');
 const chalk = require('chalk');
 const dotenv = require('dotenv');
 const expressStatusMonitor = require('express-status-monitor');
+const sass = require('node-sass-middleware');
 
 /**
  *  Load environmental variables from .env file
@@ -43,6 +44,12 @@ app.use(logger('dev'));
 
 // Monitor status Middleware
 app.use(expressStatusMonitor());
+
+// SASS Middleware
+app.use(sass({
+  src: path.join(__dirname, 'public'),
+  dest: path.join(__dirname, 'public'),
+}));
 
 // Static files
 app.use('/', express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
