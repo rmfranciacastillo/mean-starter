@@ -39,7 +39,15 @@
     "supertest": "^4.0.2"
   },
   "lint-staged": {
-    "*.js": [
+    "app.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "controllers/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "config/*.js": [
       "eslint --fix",
       "git add"
     ]
