@@ -1,11 +1,10 @@
+/* eslint-disable */
 module.exports = {
   env: {
     browser: true,
     es6: true,
   },
-  plugins: {
-    'mocha', 
-  },
+  plugins: ['mocha'],
   extends: 'airbnb-base',
   globals: {
     Atomics: 'readonly',
@@ -16,6 +15,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    mocha/no-exclusive-tests: 'error'
+    'mocha/no-exclusive-tests': 'error'
   },
 };

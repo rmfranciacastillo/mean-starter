@@ -42,6 +42,11 @@ app.use(logger('dev'));
 // Monitor status Middleware
 app.use(expressStatusMonitor());
 
+// Routes
+const storyRoute = require('./routes/story');
+
+app.use('/stories', storyRoute);
+
 // Static Files
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/webfonts'), { maxAge: 31557600000 }));
