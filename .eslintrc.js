@@ -3,6 +3,9 @@ module.exports = {
     browser: true,
     es6: true,
   },
+  plugins: {
+    'mocha', 
+  },
   extends: 'airbnb-base',
   globals: {
     Atomics: 'readonly',
@@ -13,5 +16,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    mocha/no-exclusive-tests: 'error'
   },
 };
