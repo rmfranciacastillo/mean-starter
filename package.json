@@ -4,11 +4,11 @@
   "description": "MEAN starter project based on hackathon hacker starter file",
   "main": "app.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node server/server.js",
     "dev": "export NODE_ENV=development || SET NODE_ENV=development && nodemon --exec npm start",
-    "test": "export NODE_ENV=test || SET NODE_ENV=test && nyc mocha *.test.js --timeout=1000 --exit",
+    "test": "export NODE_ENV=test || SET NODE_ENV=test && nyc mocha server/**/*.test.js --timeout=1000 --exit",
     "watch-test": "nodemon --exec npm test",
-    "lint": "eslint .",
+    "lint": "eslint server/*.js",
     "lint-setup": "eslint -c"
   },
   "repository": {
@@ -42,15 +42,7 @@
     "supertest": "^4.0.2"
   },
   "lint-staged": {
-    "server.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "controllers/*.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "config/*.js": [
+    "server/*.js": [
       "eslint --fix",
       "git add"
     ]
