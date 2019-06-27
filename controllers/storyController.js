@@ -1,21 +1,50 @@
+const { Story } = require('../models/Story');
+
 const getAllStories = (req, res) => {
-  res.send('GET all Stories');
+  Story.getAll()
+    .then(stories => res.status(200).json({ success: true, msg: stories }))
+    .catch(err => res.status(500).json({ success: false, err }));
 };
 
 const getStory = (req, res) => {
-  res.send('GET single story');
+  const storyId = req.params.id;
+
+  Story.getOneStory(storyId)
+    .then(story => res.status(200).json({ success: true, msg: story }))
+    .catch(err => res.status(500).json({ success: false, err }));
 };
 
 const postStory = (req, res) => {
-  res.send('POST story');
+  const story = new Story({
+    author: req.body.author,
+    title: req.body.title,
+    text: req.body.text,
+  });
+
+  Story.createStory(story)
+    .then(() => res.status(200).json({ success: true, msg: 'Story was created' }))
+    .catch(err => res.status(500).json({ success: false, err }));
 };
 
 const deleteStory = (req, res) => {
-  res.send('DELETE story');
+  const storyId = req.params.id;
+
+  Story.deleteStory(storyId)
+    .then(() => res.status(200).json({ success: true, msg: 'Story is deleted' }))
+    .catch(err => res.status(500).json({ success: true, err }));
 };
 
 const updateStory = (req, res) => {
-  res.send('PUT story');
+  const storyId = req.params.id;
+  const body = {
+    author: req.body.author,
+    title: req.body.title,
+    text: req.body.text,
+  };
+
+  Story.updateStory(storyId, body)
+    .then(story => res.status(200).json({ success: true, msg: story }))
+    .catch(err => res.status(500).json({ success: false, err }));
 };
 
 module.exports = {
