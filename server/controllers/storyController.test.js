@@ -50,7 +50,9 @@ describe('POST /stories', () => {
       .send(story)
       .expect(200)
       .expect((res) => {
-        expect(res.body.msg.title).equal('Story Posted');
+        expect(res.body.msg.author).equal(story.author);
+        expect(res.body.msg.title).equal(story.title);
+        expect(res.body.msg.text).equal(story.text);
       })
       .end((err, res) => {
         if (err) {
@@ -88,5 +90,35 @@ describe('POST /stories', () => {
           })
           .catch(error => done(error));
       });
+  });
+});
+
+describe('GET /stories/:id', () => {
+  it('should return story', (done) => {
+    request(app)
+      .get(`/stories/${stories[0]._id.toHexString()}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.msg[0].title).equal(stories[0].title);
+        expect(res.body.msg[0].author).equal(stories[0].author);
+        expect(res.body.msg[0].text).equal(stories[0].text);
+      })
+      .end(done);
+  });
+
+  it('should return 404 if story not found', (done) => {
+    const hexId = new ObjectID().toHexString();
+
+    request(app)
+      .get(`/stories/${hexId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 for non-object ids', (done) => {
+    request(app)
+      .get('/stories/abc1234')
+      .expect(404)
+      .end(done);
   });
 });
