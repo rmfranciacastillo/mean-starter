@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable no-unused-vars */
 const { expect } = require('chai');
 const request = require('supertest');
 
