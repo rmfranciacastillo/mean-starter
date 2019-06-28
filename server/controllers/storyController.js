@@ -22,7 +22,7 @@ const postStory = (req, res) => {
   });
 
   Story.createStory(story)
-    .then(() => res.status(200).json({ success: true, msg: 'Story was created' }))
+    .then(createdStory => res.status(200).json({ success: true, msg: createdStory }))
     .catch(err => res.status(500).json({ success: false, err }));
 };
 
