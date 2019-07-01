@@ -36,7 +36,7 @@ StorySchema.statics.updateStory = function (id, body) {
   if (!ObjectID.isValid(id)) {
     return Promise.reject(new Error('ObjectID is not Valid!'));
   }
-  return this.findByIdAndUpdate(id, { $set: body }, { new: true, userFindAndModify: false });
+  return this.findByIdAndUpdate(id, { $set: body }, { new: true, useFindAndModify: false });
 };
 
 const Story = model('Story', StorySchema);

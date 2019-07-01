@@ -165,3 +165,26 @@ describe('DELETE /stories/:id', () => {
       .end(done);
   });
 });
+
+describe('PUT /stories/:id', () => {
+  it('should return updated story', (done) => {
+    const hexId = stories[0]._id.toHexString();
+    const body = {
+      author: 'New Author',
+      title: 'Updated title',
+      text: 'Updated text',
+    };
+
+    request(app)
+      .put(`/stories/${hexId}`)
+      .send(body)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.success).to.equal(true);
+        expect(res.body.msg.author).to.equal(body.author);
+        expect(res.body.msg.title).to.equal(body.title);
+        expect(res.body.msg.text).to.equal(body.text);
+      })
+      .end(done);
+  });
+});
