@@ -44,9 +44,22 @@ const postStory = (req, res) => {
 const deleteStory = (req, res) => {
   const storyId = req.params.id;
 
-  Story.deleteStory(storyId)
-    .then(() => res.status(200).json({ success: true, msg: 'Story is deleted' }))
-    .catch(err => res.status(500).json({ success: true, err }));
+  if (!ObjectID.isValid(storyId)) {
+    res.status(404).json({ success: false, msg: 'ID is not valid' });
+  } else {
+    Story.deleteStory(storyId)
+      .then((story) => {
+        let statusCode = 200;
+        let response = { success: true, msg: story };
+
+        if (story === null) {
+          statusCode = 404;
+          response = { success: false, msg: '' };
+        }
+        res.status(statusCode).json(response);
+      })
+      .catch(err => res.status(500).json({ success: false, err }));
+  }
 };
 
 const updateStory = (req, res) => {

@@ -29,7 +29,7 @@ StorySchema.statics.deleteStory = function (id) {
     return Promise.reject(new Error('ObjectID is not Valid!'));
   }
 
-  return this.findByIdAndRemove({ _id: id });
+  return this.findByIdAndRemove({ _id: id }, { useFindAndModify: false });
 };
 
 StorySchema.statics.updateStory = function (id, body) {

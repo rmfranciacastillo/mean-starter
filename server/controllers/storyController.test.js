@@ -122,3 +122,46 @@ describe('GET /stories/:id', () => {
       .end(done);
   });
 });
+
+describe('DELETE /stories/:id', () => {
+  it('should remove a todo', (done) => {
+    const hexId = stories[0]._id.toHexString();
+
+    request(app)
+      .delete(`/stories/${hexId}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.success).equal(true);
+        expect(res.body.msg).to.have.property('author');
+        expect(res.body.msg).to.have.property('title');
+        expect(res.body.msg).to.have.property('text');
+      })
+      .end((err) => {
+        if (err) {
+          done(err);
+        }
+
+        Story.getAll()
+          .then((storiesRetrieved) => {
+            expect(storiesRetrieved.length).to.equal(1);
+            done();
+          });
+      });
+  });
+
+  it('should return 404 if story not found', (done) => {
+    const hexId = new ObjectID().toHexString();
+
+    request(app)
+      .delete(`/stories/${hexId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 is story is not valid', (done) => {
+    request(app)
+      .delete('/stories/123abc')
+      .expect(404)
+      .end(done);
+  });
+});
