@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -7,9 +7,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  @Input() headerImage: string;
+  @Input() heading: string;
+  @Input() subheading: string;
+  @Input() isPost: string;
 
-  ngOnInit() {
+  constructor() {
+    this.headerImage = 'url(./assets/img/home-bg.jpg)';
+    this.heading = 'Clean Blog';
+    this.subheading = 'A blog starter';
+    this.isPost = 'page';
   }
+
+  ngOnInit() { }
 
 }
