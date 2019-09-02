@@ -32,6 +32,10 @@ UserSchema.methods.comparePasswords = function comparePasswords(candidatePasswor
   });
 };
 
+UserSchema.statics.getAllUsers = function getAllUsers() {
+  return this.find();
+};
+
 // CRUD
 UserSchema.statics.createNewUser = user => user.save();
 
