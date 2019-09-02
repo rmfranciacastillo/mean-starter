@@ -25,166 +25,168 @@ beforeEach((done) => {
     .then(() => done());
 });
 
-describe('GET /stories', () => {
-  it('should get all stories', (done) => {
-    request(app)
-      .get('/stories')
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.msg.length).equal(2);
-      })
-      .end(done);
+describe('Story Controller Tests', () => {
+  describe('GET /api/stories', () => {
+    it('should get all stories', (done) => {
+      request(app)
+        .get('/api/stories')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.msg.length).equal(2);
+        })
+        .end(done);
+    });
   });
-});
 
-describe('POST /stories', () => {
-  it('should create a story', (done) => {
-    const story = new Story({
-      author: 'Renato Francia',
-      title: 'Story Posted',
-      text: 'Story Sample text',
+  describe('POST /api/stories', () => {
+    it('should create a story', (done) => {
+      const story = new Story({
+        author: 'Renato Francia',
+        title: 'Story Posted',
+        text: 'Story Sample text',
+      });
+
+      request(app)
+        .post('/api/stories')
+        .send(story)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.msg.author).equal(story.author);
+          expect(res.body.msg.title).equal(story.title);
+          expect(res.body.msg.text).equal(story.text);
+        })
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+
+          const storyId = res.body.msg._id;
+
+          return Story.getOneStory(storyId)
+            .then((foundStories) => {
+              expect(foundStories.length).equal(1);
+              expect(foundStories[0].title).equal('Story Posted');
+              expect(foundStories[0].author).equal('Renato Francia');
+              expect(foundStories[0].text).equal('Story Sample text');
+              done();
+            })
+            .catch((e) => { done(e); });
+        });
     });
 
-    request(app)
-      .post('/stories')
-      .send(story)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.msg.author).equal(story.author);
-        expect(res.body.msg.title).equal(story.title);
-        expect(res.body.msg.text).equal(story.text);
-      })
-      .end((err, res) => {
-        if (err) {
-          return done(err);
-        }
+    it('should not create a story with invalid data', (done) => {
+      request(app)
+        .post('/api/stories')
+        .send({})
+        .expect(500)
+        .end((err) => {
+          if (err) {
+            return done(err);
+          }
 
-        const storyId = res.body.msg._id;
-
-        return Story.getOneStory(storyId)
-          .then((foundStories) => {
-            expect(foundStories.length).equal(1);
-            expect(foundStories[0].title).equal('Story Posted');
-            expect(foundStories[0].author).equal('Renato Francia');
-            expect(foundStories[0].text).equal('Story Sample text');
-            done();
-          })
-          .catch((e) => { done(e); });
-      });
+          return Story.find()
+            .then((foundStories) => {
+              expect(foundStories.length).equal(2);
+              done();
+            })
+            .catch(error => done(error));
+        });
+    });
   });
 
-  it('should not create a story with invalid data', (done) => {
-    request(app)
-      .post('/stories')
-      .send({})
-      .expect(500)
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
+  describe('GET /api/stories/:id', () => {
+    it('should return story', (done) => {
+      request(app)
+        .get(`/api/stories/${stories[0]._id.toHexString()}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.msg[0].title).equal(stories[0].title);
+          expect(res.body.msg[0].author).equal(stories[0].author);
+          expect(res.body.msg[0].text).equal(stories[0].text);
+        })
+        .end(done);
+    });
 
-        return Story.find()
-          .then((foundStories) => {
-            expect(foundStories.length).equal(2);
-            done();
-          })
-          .catch(error => done(error));
-      });
-  });
-});
+    it('should return 404 if story not found', (done) => {
+      const hexId = new ObjectID().toHexString();
 
-describe('GET /stories/:id', () => {
-  it('should return story', (done) => {
-    request(app)
-      .get(`/stories/${stories[0]._id.toHexString()}`)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.msg[0].title).equal(stories[0].title);
-        expect(res.body.msg[0].author).equal(stories[0].author);
-        expect(res.body.msg[0].text).equal(stories[0].text);
-      })
-      .end(done);
+      request(app)
+        .get(`/api/stories/${hexId}`)
+        .expect(404)
+        .end(done);
+    });
+
+    it('should return 404 for non-object ids', (done) => {
+      request(app)
+        .get('/api/stories/abc1234')
+        .expect(404)
+        .end(done);
+    });
   });
 
-  it('should return 404 if story not found', (done) => {
-    const hexId = new ObjectID().toHexString();
+  describe('DELETE /api/stories/:id', () => {
+    it('should remove a todo', (done) => {
+      const hexId = stories[0]._id.toHexString();
 
-    request(app)
-      .get(`/stories/${hexId}`)
-      .expect(404)
-      .end(done);
+      request(app)
+        .delete(`/api/stories/${hexId}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.success).equal(true);
+          expect(res.body.msg).to.have.property('author');
+          expect(res.body.msg).to.have.property('title');
+          expect(res.body.msg).to.have.property('text');
+        })
+        .end((err) => {
+          if (err) {
+            done(err);
+          }
+
+          Story.getAll()
+            .then((storiesRetrieved) => {
+              expect(storiesRetrieved.length).to.equal(1);
+              done();
+            });
+        });
+    });
+
+    it('should return 404 if story not found', (done) => {
+      const hexId = new ObjectID().toHexString();
+
+      request(app)
+        .delete(`/api/stories/${hexId}`)
+        .expect(404)
+        .end(done);
+    });
+
+    it('should return 404 is story is not valid', (done) => {
+      request(app)
+        .delete('/api/stories/123abc')
+        .expect(404)
+        .end(done);
+    });
   });
 
-  it('should return 404 for non-object ids', (done) => {
-    request(app)
-      .get('/stories/abc1234')
-      .expect(404)
-      .end(done);
-  });
-});
+  describe('PUT /api/stories/:id', () => {
+    it('should return updated story', (done) => {
+      const hexId = stories[0]._id.toHexString();
+      const body = {
+        author: 'New Author',
+        title: 'Updated title',
+        text: 'Updated text',
+      };
 
-describe('DELETE /stories/:id', () => {
-  it('should remove a todo', (done) => {
-    const hexId = stories[0]._id.toHexString();
-
-    request(app)
-      .delete(`/stories/${hexId}`)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.success).equal(true);
-        expect(res.body.msg).to.have.property('author');
-        expect(res.body.msg).to.have.property('title');
-        expect(res.body.msg).to.have.property('text');
-      })
-      .end((err) => {
-        if (err) {
-          done(err);
-        }
-
-        Story.getAll()
-          .then((storiesRetrieved) => {
-            expect(storiesRetrieved.length).to.equal(1);
-            done();
-          });
-      });
-  });
-
-  it('should return 404 if story not found', (done) => {
-    const hexId = new ObjectID().toHexString();
-
-    request(app)
-      .delete(`/stories/${hexId}`)
-      .expect(404)
-      .end(done);
-  });
-
-  it('should return 404 is story is not valid', (done) => {
-    request(app)
-      .delete('/stories/123abc')
-      .expect(404)
-      .end(done);
-  });
-});
-
-describe('PUT /stories/:id', () => {
-  it('should return updated story', (done) => {
-    const hexId = stories[0]._id.toHexString();
-    const body = {
-      author: 'New Author',
-      title: 'Updated title',
-      text: 'Updated text',
-    };
-
-    request(app)
-      .put(`/stories/${hexId}`)
-      .send(body)
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.success).to.equal(true);
-        expect(res.body.msg.author).to.equal(body.author);
-        expect(res.body.msg.title).to.equal(body.title);
-        expect(res.body.msg.text).to.equal(body.text);
-      })
-      .end(done);
+      request(app)
+        .put(`/api/stories/${hexId}`)
+        .send(body)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.success).to.equal(true);
+          expect(res.body.msg.author).to.equal(body.author);
+          expect(res.body.msg.title).to.equal(body.title);
+          expect(res.body.msg.text).to.equal(body.text);
+        })
+        .end(done);
+    });
   });
 });

@@ -44,8 +44,10 @@ app.use(expressStatusMonitor());
 
 // Routes
 const storyRoute = require('./routes/story');
+const userRoute = require('./routes/user');
 
-app.use('/stories', storyRoute);
+app.use('/api/stories', storyRoute);
+app.use('/api/users', userRoute);
 
 // Static Files
 app.use('/', express.static(path.join(__dirname, 'public')));
