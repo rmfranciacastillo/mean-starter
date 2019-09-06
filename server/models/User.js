@@ -50,7 +50,7 @@ UserSchema.statics.deleteUserById = function deleteUserById(id) {
   if (!ObjectID.isValid(id)) {
     return Promise.reject(new Error('ObjectID is not valid'));
   }
-  return this.findOneAndRemove({ _id: id });
+  return this.findOneAndRemove({ _id: id }, { useFindAndModify: false });
 };
 
 UserSchema.statics.updateUser = function updateUser(id, body) {
