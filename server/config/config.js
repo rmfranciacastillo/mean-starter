@@ -1,10 +1,19 @@
-const env = process.env.NODE_ENV;
+const environment = process.env.NODE_ENV;
 
 /* eslint-disable global-require */
-if (env === 'development') {
-  require('dotenv').config({ path: '.env.development' });
-} else if (env === 'test') {
-  require('dotenv').config({ path: '.env.test' });
-} else {
-  require('dotenv').config({ path: '.env' });
-}
+const selectEnvironment = (env) => {
+  if (env === 'development') {
+    require('dotenv').config({ path: '.env.development' });
+  } else if (env === 'test') {
+    require('dotenv').config({ path: '.env.test' });
+  } else {
+    require('dotenv').config({ path: '.env' });
+  }
+  return env;
+};
+
+selectEnvironment(environment);
+
+module.exports = {
+  selectEnvironment,
+};
