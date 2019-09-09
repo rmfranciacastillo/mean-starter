@@ -58,6 +58,13 @@ describe('Settings API test', () => {
             .catch((e) => { done(e); });
         });
     });
+
+    it('should return a 500 status', (done) => {
+      request(app)
+        .post('/api/settings')
+        .send({})
+        .expect(500, done);
+    });
   });
 
   describe('PATCH /api/settings', () => {
@@ -76,6 +83,13 @@ describe('Settings API test', () => {
           expect(res.body.settings.description).to.equal(description);
         })
         .end(done);
+    });
+
+    it('should return 500 status', (done) => {
+      request(app)
+        .patch('/api/settings')
+        .send({})
+        .expect(500, done);
     });
   });
 });

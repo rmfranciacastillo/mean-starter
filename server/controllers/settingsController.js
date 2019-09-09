@@ -14,7 +14,7 @@ const setupSettings = (req, res) => {
 const getSettingsSetup = (req, res) => {
   Settings.getSettings()
     .then(settings => res.status(200).json({ success: true, settings }))
-    .catch(err => res.status(404).json({ success: false, err }));
+    .catch(err => res.status(500).json({ success: false, err }));
 };
 
 const updateSettings = (req, res) => {
