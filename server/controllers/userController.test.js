@@ -159,5 +159,12 @@ describe('User Controller Tests', () => {
         })
         .end(done);
     });
+
+    it('should return a 500 Error', (done) => {
+      request(app)
+        .patch('/api/users/forgot-password')
+        .send({})
+        .expect(500, done);
+    });
   });
 });

@@ -25,7 +25,7 @@ const getStory = (req, res) => {
         }
         res.status(statusCode).json(response);
       })
-      .catch(err => res.status(404).json({ success: false, err }));
+      .catch(err => res.status(500).json({ success: false, err }));
   }
 };
 

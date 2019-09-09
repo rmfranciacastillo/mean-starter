@@ -109,7 +109,6 @@ describe('Story Controller Tests', () => {
 
     it('should return 404 if story not found', (done) => {
       const hexId = new ObjectID().toHexString();
-
       request(app)
         .get(`/api/stories/${hexId}`)
         .expect(404)
@@ -119,8 +118,7 @@ describe('Story Controller Tests', () => {
     it('should return 404 for non-object ids', (done) => {
       request(app)
         .get('/api/stories/abc1234')
-        .expect(404)
-        .end(done);
+        .expect(404, done);
     });
   });
 
