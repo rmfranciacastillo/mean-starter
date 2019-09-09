@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/server.js",
     "dev": "export NODE_ENV=development || SET NODE_ENV=development && nodemon --exec npm start",
-    "test": "export NODE_ENV=test || SET NODE_ENV=test && nyc mocha server/**/*.test.js --timeout=1000 --exit",
+    "test": "export NODE_ENV=test || SET NODE_ENV=test && nyc mocha server/*.test.js server/**/*.test.js --timeout=1000 --exit",
     "watch-test": "nodemon --exec npm test",
     "lint": "eslint server/*.js",
     "lint-setup": "eslint -c"

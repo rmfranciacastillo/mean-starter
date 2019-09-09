@@ -28,7 +28,7 @@ const app = express();
 
 // Express Configuration
 app.set('host', '0.0.0.0');
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
