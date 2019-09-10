@@ -5,6 +5,7 @@ const { ObjectID } = require('mongodb');
 
 const { app } = require('../server');
 const { Settings } = require('../models/Settings');
+const { User } = require('../models/User');
 
 const settings = [{
   _id: new ObjectID(),
@@ -12,17 +13,43 @@ const settings = [{
   description: 'A simple App',
 }];
 
+const users = [{
+  _id: new ObjectID(),
+  username: 'renato',
+  name: 'Renato',
+  email: 'user@gmail.com',
+  password: 'user12345',
+}];
+
 beforeEach((done) => {
   Settings.deleteMany({})
     .then(() => Settings.insertMany(settings))
+    .then(() => User.deleteMany({}))
+    .then(() => User.create(users))
     .then(() => done());
 });
 
 describe('Settings API test', () => {
   describe('GET /api/settings', () => {
+    let authToken;
+    before((done) => {
+      request(app)
+        .post('/api/users/authenticate')
+        .send({
+          username: users[0].username,
+          password: users[0].password,
+        })
+        .end((err, res) => {
+          if (err) { done(err); }
+          authToken = res.body.token;
+          done();
+        });
+    });
+
     it('should return settings', (done) => {
       request(app)
         .get('/api/settings')
+        .set('Authorization', authToken)
         .expect(200)
         .expect((res) => {
           expect(res.body.success).to.equal(true);
@@ -32,6 +59,21 @@ describe('Settings API test', () => {
   });
 
   describe('POST /api/settings', () => {
+    let authToken;
+    beforeEach((done) => {
+      request(app)
+        .post('/api/users/authenticate')
+        .send({
+          username: users[0].username,
+          password: users[0].password,
+        })
+        .end((err, res) => {
+          if (err) { done(err); }
+          authToken = res.body.token;
+          done();
+        });
+    });
+
     it('should return 2 settings', (done) => {
       const newSetting = new Settings({
         title: 'Other Title',
@@ -41,6 +83,7 @@ describe('Settings API test', () => {
       request(app)
         .post('/api/settings')
         .send(newSetting)
+        .set('Authorization', authToken)
         .expect(200)
         .expect((res) => {
           expect(res.body.success).to.equal(true);
@@ -63,11 +106,27 @@ describe('Settings API test', () => {
       request(app)
         .post('/api/settings')
         .send({})
+        .set('Authorization', authToken)
         .expect(500, done);
     });
   });
 
   describe('PATCH /api/settings', () => {
+    let authToken;
+    beforeEach((done) => {
+      request(app)
+        .post('/api/users/authenticate')
+        .send({
+          username: users[0].username,
+          password: users[0].password,
+        })
+        .end((err, res) => {
+          if (err) { done(err); }
+          authToken = res.body.token;
+          done();
+        });
+    });
+
     it('should return updated settings', (done) => {
       const settingsID = settings[0]._id;
       const title = 'New Title';
@@ -76,6 +135,7 @@ describe('Settings API test', () => {
       request(app)
         .patch('/api/settings')
         .send({ id: settingsID, title, description })
+        .set('Authorization', authToken)
         .expect(200)
         .expect((res) => {
           expect(res.body.success).to.equal(true);
@@ -89,6 +149,7 @@ describe('Settings API test', () => {
       request(app)
         .patch('/api/settings')
         .send({})
+        .set('Authorization', authToken)
         .expect(500, done);
     });
   });
