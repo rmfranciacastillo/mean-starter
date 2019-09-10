@@ -28,9 +28,25 @@ beforeEach((done) => {
 
 describe('User Controller Tests', () => {
   describe('GET /api/user/all', () => {
+    let authToken;
+    before((done) => {
+      request(app)
+        .post('/api/users/authenticate')
+        .send({
+          username: users[0].username,
+          password: users[0].password,
+        })
+        .end((err, res) => {
+          if (err) { done(err); }
+          authToken = res.body.token;
+          done();
+        });
+    });
+
     it('should get all users', (done) => {
       request(app)
         .get('/api/users/all')
+        .set('Authorization', authToken)
         .expect(200)
         .expect((res) => {
           expect(res.body.users.length).equal(2);
@@ -134,7 +150,7 @@ describe('User Controller Tests', () => {
         });
     });
 
-    it('should remove a todo', (done) => {
+    it('should remove a user', (done) => {
       const userId = users[0]._id.toHexString();
 
       request(app)
@@ -161,12 +177,27 @@ describe('User Controller Tests', () => {
   });
 
   describe('PATCH /api/users/forgot-password', () => {
+    let authToken;
+    beforeEach((done) => {
+      request(app)
+        .post('/api/users/authenticate')
+        .send({
+          username: users[0].username,
+          password: users[0].password,
+        })
+        .end((err, res) => {
+          if (err) { done(err); }
+          authToken = res.body.token;
+          done();
+        });
+    });
+
     it('should update a password', (done) => {
       const requestBody = { id: users[0]._id, password: 'newpassword' };
-
       request(app)
         .patch('/api/users/forgot-password')
         .send(requestBody)
+        .set('Authorization', authToken)
         .expect(200)
         .expect(() => {
           User.getUserById(requestBody.id)
@@ -183,6 +214,7 @@ describe('User Controller Tests', () => {
       request(app)
         .patch('/api/users/forgot-password')
         .send({})
+        .set('Authorization', authToken)
         .expect(500, done);
     });
   });

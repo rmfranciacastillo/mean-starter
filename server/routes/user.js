@@ -11,10 +11,10 @@ router.route('/authenticate')
   .post(userController.loginUser);
 
 router.route('/all')
-  .get(userController.getAllUsers);
+  .get(passport.authenticate('jwt', { session: false }), userController.getAllUsers);
 
 router.route('/forgot-password')
-  .patch(userController.updateUserPassword);
+  .patch(passport.authenticate('jwt', { session: false }), userController.updateUserPassword);
 
 router.route('/:id')
   .get(userController.getUser);

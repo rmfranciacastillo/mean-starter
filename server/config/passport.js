@@ -13,8 +13,6 @@ module.exports = function passportJwtUser(passport) {
 
   // passport Use
   passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
-    console.log(jwtPayload);
-
     User.getUserById(jwtPayload._id)
       .then(user => done(null, user))
       .catch((err) => { done(err); });
