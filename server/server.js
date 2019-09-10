@@ -6,6 +6,8 @@ const path = require('path');
 const logger = require('morgan');
 const chalk = require('chalk');
 const expressStatusMonitor = require('express-status-monitor');
+const cors = require('cors');
+const passport = require('passport');
 
 /**
  *  Load environmental variables from .env file
@@ -32,6 +34,9 @@ app.set('port', process.env.PORT);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// CORS middleware
+app.use(cors());
+
 // Parser Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -41,6 +46,12 @@ app.use(logger('dev'));
 
 // Monitor status Middleware
 app.use(expressStatusMonitor());
+
+// Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./config/passport')(passport);
 
 // Routes
 const storyRoute = require('./routes/story');

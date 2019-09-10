@@ -5,9 +5,11 @@ const { ObjectID } = require('mongodb');
 const { Schema, model } = require('mongoose');
 
 const UserSchema = Schema({
+  username: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, default: 'user' },
 });
 
 // User middleware
@@ -26,10 +28,8 @@ UserSchema.pre('save', function addPasswordHash(next) {
   });
 });
 
-UserSchema.methods.comparePasswords = function comparePasswords(candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-    cb(err, isMatch);
-  });
+UserSchema.methods.comparePasswords = function comparePasswords(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 UserSchema.statics.getAllUsers = function getAllUsers() {
@@ -44,6 +44,10 @@ UserSchema.statics.getUserById = function getUserById(id) {
     return Promise.reject(new Error('ObjectID is not valid'));
   }
   return this.findOne({ _id: id });
+};
+
+UserSchema.statics.getUserByUsername = function getUserByUsername(username) {
+  return this.findOne({ username });
 };
 
 UserSchema.statics.deleteUserById = function deleteUserById(id) {

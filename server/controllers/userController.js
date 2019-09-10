@@ -1,4 +1,5 @@
 const { ObjectID } = require('mongodb');
+const jwt = require('jsonwebtoken');
 
 const { User } = require('../models/User');
 
@@ -29,10 +30,9 @@ const getUser = (req, res) => {
   }
 };
 
-// TODO finish all USer Controllers
-// TODO Test user controller
 const registerUser = (req, res) => {
   const user = new User({
+    username: req.body.username,
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
@@ -79,10 +79,44 @@ const updateUserPassword = (req, res) => {
     .catch(err => res.status(500).json({ success: false, err }));
 };
 
+const loginUser = (req, res) => {
+  const { username, password } = req.body;
+  let user;
+
+  User.getUserByUsername(username)
+    .then((foundUser) => {
+      if (foundUser) {
+        user = foundUser;
+        return user.comparePasswords(password);
+      }
+      return res.status(404).json({ success: false, msg: 'User not found!' });
+    })
+    .then((isMatch) => {
+      if (isMatch) {
+        const token = jwt.sign(user.toObject(), process.env.SECRET, { expiresIn: 604800 });
+        return res.status(200).json({
+          success: true,
+          token: `Bearer ${token}`,
+          user: {
+            id: user.id,
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+        });
+      }
+
+      return res.status(403).json({ success: false, msg: 'Wrong Password' });
+    })
+    .catch(err => res.status(500).json({ success: false, err }));
+};
+
 module.exports = {
   getAllUsers,
   getUser,
   registerUser,
   deleteUser,
   updateUserPassword,
+  loginUser,
 };
