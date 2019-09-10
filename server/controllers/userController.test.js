@@ -8,11 +8,13 @@ const { User } = require('../models/User');
 
 const users = [{
   _id: new ObjectID(),
+  username: 'renato',
   name: 'Renato',
   email: 'user@gmail.com',
   password: 'user12345',
 }, {
   _id: new ObjectID(),
+  username: 'nachocode',
   name: 'Nacho',
   email: 'nacho@gmail.com',
   password: 'nacho12345',
@@ -69,6 +71,7 @@ describe('User Controller Tests', () => {
   describe('POST /api/user', () => {
     it('should create a user', (done) => {
       const user = new User({
+        username: 'nachoman',
         name: 'Nachoman',
         email: 'nachoman@gmail.com',
         password: 'nachoman12345',
@@ -116,12 +119,28 @@ describe('User Controller Tests', () => {
   });
 
   describe('DELETE /api/users', () => {
+    let authToken;
+    before((done) => {
+      request(app)
+        .post('/api/users/authenticate')
+        .send({
+          username: users[0].username,
+          password: users[0].password,
+        })
+        .end((err, res) => {
+          if (err) { done(err); }
+          authToken = res.body.token;
+          done();
+        });
+    });
+
     it('should remove a todo', (done) => {
       const userId = users[0]._id.toHexString();
 
       request(app)
         .delete('/api/users')
         .send({ id: userId })
+        .set('Authorization', authToken)
         .expect(200)
         .expect((res) => {
           expect(res.body.success).equal(true);
