@@ -8,6 +8,7 @@ describe('GET request to server', () => {
   it('Should return 200 OK', (done) => {
     request(app)
       .get('/')
-      .expect(200, done);
+      .expect(200)
+      .end(done);
   });
 });
